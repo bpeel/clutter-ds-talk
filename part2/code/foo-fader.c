@@ -19,6 +19,7 @@ static GParamSpec *
 properties[N_PROPERTIES];
 
 #define SPOTLIGHT_SIZE 256
+#define SPOTLIGHT_OPAQUE_FRACTION 0.5f
 
 G_DEFINE_TYPE (FooFader, foo_fader, CLUTTER_TYPE_ACTOR);
 
@@ -30,7 +31,12 @@ struct _FooFaderPrivate
 {
   CoglMaterial *material;
 
+  CoglMaterial *material_0;
+  CoglMaterial *material_1;
+
   float progress;
+
+  gboolean progress_matrix_dirty;
 };
 
 static void
@@ -74,22 +80,65 @@ foo_fader_get_property (GObject *object,
 }
 
 static void
+update_progress_matrix (FooFader *self)
+{
+  FooFaderPrivate *priv = self->priv;
+
+  if (!priv->progress_matrix_dirty)
+    return;
+
+  /* If the progress is fully one or other of the images then we won't
+     use multi-texturing so there's no point in updating the matrix */
+  if (priv->progress != 0.0f && priv->progress != 1.0f)
+    {
+      CoglMatrix matrix;
+
+      cogl_matrix_init_identity (&matrix);
+
+      cogl_matrix_translate (&matrix, 0.5f, 0.5f, 0.0f);
+
+      cogl_matrix_scale (&matrix,
+                         1.0f / (priv->progress * 3.0f),
+                         1.0f / (priv->progress * 3.0f),
+                         1.0f);
+
+      cogl_matrix_translate (&matrix, -0.5f, -0.5f, 0.0f);
+
+      cogl_material_set_layer_matrix (priv->material,
+                                      2,
+                                      &matrix);
+    }
+
+  priv->progress_matrix_dirty = FALSE;
+}
+
+static void
 foo_fader_paint (ClutterActor *actor)
 {
   FooFader *self = FOO_FADER (actor);
   FooFaderPrivate *priv = self->priv;
+  CoglMaterial *material;
   guint8 paint_opacity = clutter_actor_get_paint_opacity (actor);
   ClutterActorBox allocation;
 
+  update_progress_matrix (self);
+
   clutter_actor_get_allocation_box (actor, &allocation);
 
-  cogl_material_set_color4ub (priv->material,
+  if (priv->progress == 0.0f)
+    material = priv->material_0;
+  else if (priv->progress == 1.0f)
+    material = priv->material_1;
+  else
+    material = priv->material;
+
+  cogl_material_set_color4ub (material,
                               paint_opacity,
                               paint_opacity,
                               paint_opacity,
                               paint_opacity);
 
-  cogl_push_source (priv->material);
+  cogl_push_source (material);
 
   cogl_rectangle (0, 0,
                   allocation.x2 - allocation.x1,
@@ -112,6 +161,8 @@ foo_fader_finalize (GObject *object)
   FooFaderPrivate *priv = self->priv;
 
   cogl_object_unref (priv->material);
+  cogl_object_unref (priv->material_0);
+  cogl_object_unref (priv->material_1);
 
   G_OBJECT_CLASS (foo_fader_parent_class)->finalize (object);
 }
@@ -186,7 +237,11 @@ create_spotlight_texture (void)
         int y_distance = (y - SPOTLIGHT_SIZE / 2);
         float distance = sqrtf (x_distance * x_distance
                                 + y_distance * y_distance);
-        int value = (1.0f - distance / (SPOTLIGHT_SIZE / 2)) * 255.0f;
+        float radius_fraction = distance / (SPOTLIGHT_SIZE / 2.0f);
+        float value_fraction = ((radius_fraction
+                                 - SPOTLIGHT_OPAQUE_FRACTION)
+                                / (1.0f - SPOTLIGHT_OPAQUE_FRACTION));
+        int value = value_fraction * 255.0f;
 
         buf[y * SPOTLIGHT_SIZE + x] = CLAMP (value, 0, 255);
       }
@@ -224,6 +279,10 @@ foo_fader_init (FooFader *self)
                                    "RGBA = REPLACE (TEXTURE)",
                                    NULL);
 
+  spotlight = create_spotlight_texture ();
+  cogl_material_set_layer (priv->material, 2, spotlight);
+  cogl_handle_unref (spotlight);
+
   /* The third layer looks up a value in the spotlight image and then
      uses that to interpolate inbetween the two textures */
   cogl_material_set_layer_combine (priv->material,
@@ -250,9 +309,15 @@ foo_fader_init (FooFader *self)
   cogl_material_set_layer_wrap_mode (priv->material, 2,
                                      COGL_MATERIAL_WRAP_MODE_CLAMP_TO_EDGE);
 
-  spotlight = create_spotlight_texture ();
-  cogl_material_set_layer (priv->material, 2, spotlight);
-  cogl_handle_unref (spotlight);
+  /* These two materials will be used to avoid the multi-texturing
+     when the progress is fully either 0 or 1 */
+  priv->material_0 = cogl_material_new ();
+  cogl_material_set_layer_filters (priv->material_0, 0,
+                                   COGL_MATERIAL_FILTER_LINEAR_MIPMAP_NEAREST,
+                                   COGL_MATERIAL_FILTER_LINEAR);
+  priv->material_1 = cogl_material_copy (priv->material_0);
+
+  priv->progress_matrix_dirty = TRUE;
 }
 
 ClutterActor *
@@ -268,6 +333,7 @@ foo_fader_set_texture_0 (FooFader *self,
   FooFaderPrivate *priv = self->priv;
 
   cogl_material_set_layer (priv->material, 0, texture);
+  cogl_material_set_layer (priv->material_0, 0, texture);
 
   clutter_actor_queue_redraw (CLUTTER_ACTOR (self));
 }
@@ -279,6 +345,7 @@ foo_fader_set_texture_1 (FooFader *self,
   FooFaderPrivate *priv = self->priv;
 
   cogl_material_set_layer (priv->material, 1, texture);
+  cogl_material_set_layer (priv->material_1, 0, texture);
 
   clutter_actor_queue_redraw (CLUTTER_ACTOR (self));
 }
@@ -290,6 +357,7 @@ foo_fader_set_progress (FooFader *self,
   FooFaderPrivate *priv = self->priv;
 
   priv->progress = progress;
+  priv->progress_matrix_dirty = TRUE;
 
   clutter_actor_queue_redraw (CLUTTER_ACTOR (self));
 
