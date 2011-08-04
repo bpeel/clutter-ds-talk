@@ -1,3 +1,7 @@
+#ifdef _MSC_VER
+#include <Windows.h>
+#endif
+
 #include <clutter/clutter.h>
 #include <string.h>
 #include <math.h>

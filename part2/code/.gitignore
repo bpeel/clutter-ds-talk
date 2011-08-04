@@ -1,2 +1,9 @@
-/fader
+/fadedemo/fader
+/fadedemo/Debug
+/*.opensdf
+/*.sdf
+/*.suo
+/fadedemo/*.vcxproj.user
+/fadedemo/*.vcxproj.filters
+/Debug
 *.o

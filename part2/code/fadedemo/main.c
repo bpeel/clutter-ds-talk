@@ -1,3 +1,7 @@
+#ifdef _MSC_VER
+#include <Windows.h>
+#endif
+
 #include <clutter/clutter.h>
 
 #include "foo-fader.h"
@@ -93,3 +97,14 @@ main (int argc, char **argv)
 
   return 0;
 }
+
+#ifdef _MSC_VER
+int CALLBACK
+WinMain (HINSTANCE instance,
+	     HINSTANCE prev_instance,
+		 LPSTR cmd_line,
+		 int cmd_show)
+{
+	return main (__argc, __argv);
+}
+#endif
