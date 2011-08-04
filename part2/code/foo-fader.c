@@ -186,7 +186,7 @@ create_spotlight_texture (void)
         int y_distance = (y - SPOTLIGHT_SIZE / 2);
         float distance = sqrtf (x_distance * x_distance
                                 + y_distance * y_distance);
-        int value = (1.0f - distance / SPOTLIGHT_SIZE / 2) * 255.0f;
+        int value = (1.0f - distance / (SPOTLIGHT_SIZE / 2)) * 255.0f;
 
         buf[y * SPOTLIGHT_SIZE + x] = CLAMP (value, 0, 255);
       }
