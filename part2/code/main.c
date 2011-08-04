@@ -73,6 +73,7 @@ main (int argc, char **argv)
   cogl_handle_unref (tex1);
 
   stage = clutter_stage_get_default ();
+  clutter_stage_set_fullscreen (CLUTTER_STAGE (stage), TRUE);
 
   g_signal_connect (stage, "button-press-event",
                     G_CALLBACK (button_press_event_cb),
