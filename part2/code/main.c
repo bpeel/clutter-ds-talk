@@ -2,6 +2,24 @@
 
 #include "foo-fader.h"
 
+static int which = 0;
+
+static gboolean
+button_press_event_cb (ClutterActor *stage,
+                       const ClutterButtonEvent *event,
+                       ClutterActor *fader)
+{
+  clutter_actor_animate (fader,
+                         CLUTTER_LINEAR,
+                         3000, /* duration */
+                         "progress", (float) !which,
+                         NULL);
+
+  which = !which;
+
+  return FALSE;
+}
+
 int
 main (int argc, char **argv)
 {
@@ -54,6 +72,10 @@ main (int argc, char **argv)
   cogl_handle_unref (tex1);
 
   stage = clutter_stage_get_default ();
+
+  g_signal_connect (stage, "button-press-event",
+                    G_CALLBACK (button_press_event_cb),
+                    fader);
 
   clutter_container_add_actor (CLUTTER_CONTAINER (stage), fader);
   clutter_actor_set_size (fader,
