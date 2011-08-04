@@ -1,0 +1,49 @@
+#!/usr/bin/env pinpoint
+[fill]
+[clutter.jpg]
+[font=Sans 50px]
+[duration=3]
+-- [font=Sans 75px] [duration=5]
+
+Clutter Everywhere
+
+-- [fit] [us.jpg] [font=Sans 24px] [bottom] [duration=25]
+
+# Introduce us
+# As you saw, our talk is called 'Clutter Everywhere', and we'll get into that in a moment.
+
+Neil Roberts - Intel | Chris Lord - Mozilla | Damien Lespiau - Intel
+
+-- [duration=45] [question.jpg]
+
+# What is Clutter? For those that don't already know, Clutter is a library for building visually-rich, dynamic user interfaces, for the platform of your choice.
+# Clutter lets you take advantage of three-dimensional space, allowing you to add depth to your interfaces, and it provisions for doing both simple and complex animations.
+
+What is Clutter?
+
+• User Interface toolkit
+• 2d in 3d layout management
+• Animation framework
+
+-- [duration=45] [cyborg.jpg] [fit] [bottom-left]
+
+# What can it do? Clutter takes advantage of hardware acceleration, so interfaces created in it are fast and responsive. Clutter allows you to construct new user interface elements very easily, using code or JSON mark-up. Thanks to its comprehensive animation APIs, it allows you to do very fancy animations, and putting these things together allows you to build compelling experiences, like Gnome Shell for example.
+
+What can it do?
+
+• Hardware-accelerated
+• Easy UI building
+• Fancy animations
+• GNOME Shell
+
+-- [duration=60] [classroom.jpg] [bottom]
+
+# So, what are we talking about? This talk is going to be a bit of a re-cap, because I guess not everyone here has been at every Guadec for the last few years, but we also hope to impress and astound you with some more recent advancements.
+# It's going to take the form of a series of tutorials, followed by demonstrations. We don't have a huge amount of time and we have a lot we want to tell you about, so it's going to be a bit brisk - but they'll be time for questions at the end.
+# Something that we hope you'll go away with today is that Clutter is everywhere. And where it isn't, it should be.
+
+What are we talking about?
+
+• Recap
+• Tutorials
+• Demonstrations
