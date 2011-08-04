@@ -1,0 +1,5 @@
+#!/bin/sh
+
+export NDK_MODULE_PATH=~/src/android/a/clutter-android-prebuilts
+cd ~/src/android/a/$1
+bash

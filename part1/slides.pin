@@ -1,0 +1,74 @@
+[font=Sans 100px]
+[shading-opacity=0.85]
+[transition=fade]
+- 
+Baby steps
+
+# Let's start with simple Clutter examples. Simple, sure, but to make it more
+# fun, let's do that on Android.
+
+-
+There is <b>no</b> french cabale
+
+- [command=gnome-terminal -e ./clutter-ndk --full-screen]
+Prebuilt libraries
+
+# 
+- [font=monospace 80px] [no-markup]
+ClutterTexture *hand;
+
+hand = clutter_texture_new_from_android_asset (application,
+                                               "redhand.png");
+
+clutter_container_add_actor (CLUTTER_CONTAINER (stage),
+                             hand);
+
+# Android apps bundle their assets and the binaries in a .apk file.
+# Small wrappers around the NDK API to load those assets
+
+- [font=monospace 80px] [no-markup]
+
+constraint = clutter_align_constraint_new (stage,
+                                           CLUTTER_ALIGN_X_AXIS,
+                                           0.5f);
+clutter_actor_add_constraint (hand, constraint);
+
+- [command=gnome-terminal -e "./demo ohand" --full-screen]
+adb
+- [camera]
+
+-
+ClutterScript
+- [font=monospace 80px] [no-markup]
+   {
+      "type":"ClutterState",
+      "id":"nyanstates",
+      "duration":200,
+      "transitions":[
+         {
+            "source":null,
+            "target":"up",
+            "keys":[
+               [
+                  "rainbow1",
+                  "y",
+                  "linear",
+                  10.0,
+                  0.000000,
+                  0.000000
+               ],
+   ...
+
+# Object and animation description in JSON
+
+- [font=monospace 80px] [no-markup]
+ClutterScript *script;
+
+script = clutter_script_new_from_android_asset (application,
+                                                "nyan.json",
+                                                &error);
+- [command=gnome-terminal -e "./demo nyan-cat" --full-screen]
+
+- [camera]
+
+-

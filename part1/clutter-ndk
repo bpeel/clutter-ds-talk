@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo mkdir ~/src/android
+echo cd ~/src/android
+echo wget http://damien.lespiau.name/files/android/clutter-android-prebuilts-20110803-1137.tar.bz2
+echo tar xvf clutter-android-prebuilts-20110803-1137.tar.bz2
+echo export NDK_MODULE_PATH=~/src/android/clutter-android-prebuilts
+./demo ohand
