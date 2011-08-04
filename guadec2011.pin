@@ -1,0 +1,58 @@
+#!/usr/bin/env pinpoint
+
+-- [sofa.jpg]
+
+Multi-texturing with Cogl
+
+# - I'm going to do a quick demonstration of how you can use Cogl to
+#   do some fancy painting for your custom ClutterActors
+#
+# - Cogl is a 3D drawing API designed to work like a modular stateless
+#   wrapper on top of GL. All drawing in Clutter is ultimately done
+#   via Cogl.
+#
+# - It's not supposed to be as high level as something like Cairo, but
+#   instead it exposes only the features that GPUs can do well.
+
+-- [two-windows.jpg]
+
+Windows
+
+# To shoehorn the demo into a topic of 'Clutter everywhere' I'm going
+# to do this demo on Windows.
+#
+# Clutter has had native support for Windows for a long time but it's
+# usually a pain to get started because so far we've just been telling
+# people to compile Clutter themselves.
+
+-- [two-windows.jpg] [text-align=center]
+
+# This week I made a one-click installer in a .msi file so now it
+# should be pretty easy to get up and running. It includes all of the
+# dependencies and headers needed to build a Clutter app. The deps are
+# taken from the Tor binaries.
+
+One-click Clutter Installer for Windows
+
+.msi file
+
+http://is.gd/clutter_installer
+
+--
+
+Attribution
+
+# two-windows
+# http://www.flickr.com/photos/bazylek/4470878353/
+
+# viney-window
+# http://www.flickr.com/photos/aunto/72676701/
+
+# broken-window
+# http://www.flickr.com/photos/dok1/3542146365/in/photostream/
+
+# lots-windows
+# http://www.flickr.com/photos/laenulfean/530061292/in/photostream/
+
+# sofa
+# http://www.flickr.com/photos/malevagotica/3626951756/
