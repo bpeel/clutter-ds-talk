@@ -25,6 +25,7 @@ main (int argc, char **argv)
 {
   ClutterActor *stage;
   ClutterActor *fader;
+  ClutterConstraint *constraint;
   CoglHandle tex0, tex1;
   GError *error = NULL;
 
@@ -78,9 +79,12 @@ main (int argc, char **argv)
                     fader);
 
   clutter_container_add_actor (CLUTTER_CONTAINER (stage), fader);
-  clutter_actor_set_size (fader,
-                          clutter_actor_get_width (stage),
-                          clutter_actor_get_height (stage));
+
+  constraint =
+    clutter_bind_constraint_new (stage,
+                                 CLUTTER_BIND_SIZE,
+                                 0.0f);
+  clutter_actor_add_constraint (fader, constraint);
 
   clutter_actor_show (stage);
 
