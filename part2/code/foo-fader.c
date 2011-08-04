@@ -207,6 +207,7 @@ foo_fader_init (FooFader *self)
 {
   FooFaderPrivate *priv;
   CoglHandle spotlight;
+  int i;
 
   priv = self->priv = FOO_FADER_GET_PRIVATE (self);
 
@@ -238,6 +239,16 @@ foo_fader_init (FooFader *self)
                                    3, /* layer_index */
                                    "RGBA = MODULATE (PREVIOUS, PRIMARY)",
                                    NULL);
+
+  /* Might as well use mipmapping on all of the layers */
+  for (i = 0; i < 2; i++)
+    cogl_material_set_layer_filters (priv->material, i,
+                                     COGL_MATERIAL_FILTER_LINEAR_MIPMAP_NEAREST,
+                                     COGL_MATERIAL_FILTER_LINEAR);
+  /* We need to clamp to edge on the spotlight texture because we will
+     sample outside of the image */
+  cogl_material_set_layer_wrap_mode (priv->material, 2,
+                                     COGL_MATERIAL_WRAP_MODE_CLAMP_TO_EDGE);
 
   spotlight = create_spotlight_texture ();
   cogl_material_set_layer (priv->material, 2, spotlight);
