@@ -56,6 +56,9 @@ main (int argc, char **argv)
   stage = clutter_stage_get_default ();
 
   clutter_container_add_actor (CLUTTER_CONTAINER (stage), fader);
+  clutter_actor_set_size (fader,
+                          clutter_actor_get_width (stage),
+                          clutter_actor_get_height (stage));
 
   clutter_actor_show (stage);
 
