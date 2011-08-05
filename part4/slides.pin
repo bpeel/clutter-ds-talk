@@ -2,7 +2,7 @@
 [shading-opacity=0.85]
 [transition=fade]
 [fill]
-- [sofatron.jpg] [command=mex -f]
+- [sofatron.jpg] [bottom-left] [command=mex -f]
 
 Mex (aka Sofatron)
 
