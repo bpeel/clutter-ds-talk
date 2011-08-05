@@ -1,0 +1,19 @@
+[font=Sans 100px]
+[shading-opacity=0.85]
+[transition=fade]
+[fill]
+- [sofatron.jpg] [command=mex]
+
+Mex (aka Sofatron)
+
+- [cubovision.jpg]
+
+Intel CE 4100
+
+- [cogs.jpg]
+
+• 5 framebuffers
+• X goes away
+• events from evdev devices
+• xkbcommon to the rescue
+-
