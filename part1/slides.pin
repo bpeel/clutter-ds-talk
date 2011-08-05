@@ -1,7 +1,8 @@
 [font=Sans 100px]
 [shading-opacity=0.85]
 [transition=fade]
-- 
+[fill]
+- [baby-steps.jpg]
 Baby steps
 
 # Let's start with simple Clutter examples. Simple, sure, but to make it more
@@ -10,10 +11,10 @@ Baby steps
 -
 There is <b>no</b> french cabale
 
-- [command=gnome-terminal -e ./clutter-ndk --full-screen]
-Prebuilt libraries
+- [textures.jpg]
 
-# 
+Loading Textures
+
 - [font=monospace 80px] [no-markup]
 ClutterTexture *hand;
 
@@ -26,6 +27,10 @@ clutter_container_add_actor (CLUTTER_CONTAINER (stage),
 # Android apps bundle their assets and the binaries in a .apk file.
 # Small wrappers around the NDK API to load those assets
 
+- [constraints.jpg]
+
+Constraints
+
 - [font=monospace 80px] [no-markup]
 
 constraint = clutter_align_constraint_new (stage,
@@ -33,12 +38,32 @@ constraint = clutter_align_constraint_new (stage,
                                            0.5f);
 clutter_actor_add_constraint (hand, constraint);
 
+- [animations.jpg]
+
+Animations
+
+- [font=monospace 80px] [no-markup]
+clutter_actor_animate (hand, CLUTTER_LINEAR, 1000,
+                       "rotation-angle-z", 360.0,
+                       NULL);
+- [prebuilt.jpg] [command=gnome-terminal -e ./clutter-ndk --full-screen]
+Prebuilt libraries
+
+# Mention the steps to install SDK/NDK
+# install clutter prebuilt binaries
+# export NDK_MODULE_PATH
+# compile the jni part
+# ant debug
 - [command=gnome-terminal -e "./demo ohand" --full-screen]
+
 adb
+
 - [camera]
 
--
+- [script.jpg]
+
 ClutterScript
+
 - [font=monospace 80px] [no-markup]
    {
       "type":"ClutterState",
@@ -68,7 +93,10 @@ script = clutter_script_new_from_android_asset (application,
                                                 "nyan.json",
                                                 &error);
 - [command=gnome-terminal -e "./demo nyan-cat" --full-screen]
-
+Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan
+Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan
+Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan
+Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan
 - [camera]
 
 -
