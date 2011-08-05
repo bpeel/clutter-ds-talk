@@ -1,0 +1,125 @@
+#!/usr/bin/env pinpoint
+[font=Sans 50px]
+[duration=6]
+[fill]
+[stripes.jpg]
+--
+
+# So, Damien's shown you how to make animations, Neil's shown you some of the possibilities of texture-mapping, how's about we put those together? Unfortunately, I've not had enough time to come up with something really cool, but how about we write a demo together?
+
+Let's write a demo!
+
+-- [clouds.jpg]
+
+# First we need to decide what our demo is going to be. It's always good to pick something people can identify with. Like the background to this slide, for example. Can you spot the interesting bit?
+
+-- [clouds-highlight.jpg]
+
+# Yes, clouds are something we can all identify with. Whether we got here by plane and we were travelling above them, or we got here by land and we travelled below them, likelihood is we've spent some significant amount of time staring at them. Everyone likes a cloud - so let's make a demo involving clouds.
+# For this demo, I'm going to use a single image - and it's an image you've already seen. I won't spent time doing it now, but let's extract the cloud from this background image.
+
+-- [cloud.png] [fit] [bottom-left]
+
+# Here's one I made earlier. This is the only image we'll be using in this demo.
+
+Here's one I made earlier.
+
+-- [gnome3.png] [fit]
+
+# Unlike Damien and Neil, I'm not crazy, so my platform of choice is the Linux desktop.
+
+Switch!
+
+-- [font=monospace 18px] [command=gcc -o part1 part1.c `pkg-config --cflags --libs clutter-1.0` && ./part1]
+
+# So let's start off by writing the most basic Clutter program - a blank window. This will be our sky, so we'll give it a nice sky-blue colour too.
+
+<span foreground='light blue'>#include</span> <span foreground='purple'>&lt;clutter/clutter.h&gt;</span>
+
+<span foreground='green'>int</span> main (<span foreground='green'>int</span> argc, <span foreground='green'>char</span> **argv) {
+  <span foreground='yellow'>if</span> (clutter_init (&amp;argc, &amp;argv) != <span foreground='green'>CLUTTER_INIT_SUCCESS</span>)
+    <span foreground='yellow'>return</span> <span foreground='purple'>1</span>;
+
+  <span foreground='green'>ClutterActor</span> *stage = clutter_stage_get_default ();
+
+  <span foreground='green'>const ClutterColor</span> sky = { <span foreground='purple'>0x98</span>, <span foreground='purple'>0xc1</span>, <span foreground='purple'>0xda</span>, <span foreground='purple'>0xff</span> };
+  clutter_stage_set_color (<span foreground='green'>CLUTTER_STAGE</span> (stage), &amp;sky);
+
+  clutter_stage_set_fullscreen (<span foreground='green'>CLUTTER_STAGE</span> (stage), <span foreground='purple'>TRUE</span>);
+
+  clutter_actor_show (stage);
+  clutter_main ();
+
+  <span foreground='yellow'>return</span> <span foreground='purple'>0</span>;
+}
+
+-- [font=monospace 18px] [command=gcc -o part2 part2.c `pkg-config --cflags --libs clutter-1.0` && ./part2]
+
+# Now let's load our cloud texture and put it on the screen, see what it looks like
+
+<span foreground='green'>ClutterActor</span> *cloud = clutter_texture_new_from_file (<span foreground='purple'>"cloud.png"</span>, <span foreground='purple'>NULL</span>);
+clutter_container_add_actor (<span foreground='green'>CLUTTER_CONTAINER</span> (stage), cloud);
+
+-- [font=monospace 18px] [command=gcc -o part3 part3.c `pkg-config --cflags --libs clutter-1.0` && ./part3]
+
+# Ok, we're starting to see something - but it's not very interesting yet, so let's add some animation. Let's have it animate from the background, to the foreground.
+
+clutter_actor_set_depth (cloud, <span foreground='purple'>-500</span>);
+clutter_actor_animate (cloud, <span foreground='green'>CLUTTER_LINEAR</span>, <span foreground='purple'>4000</span>,
+                       <span foreground='purple'>"depth"</span>, <span foreground='purple'>0</span>, <span foreground='purple'>NULL</span>);
+
+-- [font=monospace 18px] [command=gcc -o part4 part4.c `pkg-config --cflags --libs clutter-1.0` && ./part4]
+
+# Ok, we added animation, but somehow that wasn't very convincing. It's at this point, we may want to use one of Clutter's more powerful animation constructs. Instead of using ClutterAnimation, we'll switch to ClutterAnimator, so we can animate multiple properties at the same time.
+# Note, that in both Animation and Animator, it's very important that you get the types right. Notice all the point-zeros in this code snippet.
+
+<span foreground='green'>ClutterAnimator</span> *animator = clutter_animator_new ();
+clutter_animator_set (animator,
+                      cloud, <span foreground='purple'>"y"</span>, <span foreground='green'>CLUTTER_LINEAR</span>, <span foreground='purple'>0.0</span>, <span foreground='purple'>0.0</span>,
+                      cloud, <span foreground='purple'>"opacity"</span>, <span foreground='green'>CLUTTER_LINEAR</span>, <span foreground='purple'>0.0</span>, <span foreground='purple'>0</span>,
+                      cloud, <span foreground='purple'>"opacity"</span>, <span foreground='green'>CLUTTER_EASE_IN_CUBIC</span>, <span foreground='purple'>0.15</span>, <span foreground='purple'>0xff</span>,
+                      cloud, <span foreground='purple'>"depth"</span>, <span foreground='green'>CLUTTER_LINEAR</span>, <span foreground='purple'>0.0</span>, <span foreground='purple'>-500.0</span>,
+                      cloud, <span foreground='purple'>"depth"</span>, <span foreground='green'>CLUTTER_LINEAR</span>, <span foreground='purple'>1.0</span>, <span foreground='purple'>0.0</span>,
+                      cloud, <span foreground='purple'>"opacity"</span>, <span foreground='green'>CLUTTER_LINEAR</span>, <span foreground='purple'>0.85</span>, <span foreground='purple'>0xff</span>,
+                      cloud, <span foreground='purple'>"opacity"</span>, <span foreground='green'>CLUTTER_EASE_OUT_CUBIC</span>, <span foreground='purple'>1.0</span>, <span foreground='purple'>0</span>,
+                      cloud, <span foreground='purple'>"y"</span>, <span foreground='green'>CLUTTER_LINEAR</span>, <span foreground='purple'>1.0</span>, <span foreground='purple'>100.0</span>,
+                      <span foreground='purple'>NULL</span>);
+clutter_animator_set_duration (animator, <span foreground='purple'>4000</span>);
+clutter_animator_start (animator);
+
+# ClutterAnimator lets you set arbitrary destinations for GObject properties at a particular progression of the animation. So for example, you can see I make the cloud fade in at the beginning, stay opaque for most of the animation, then fade out towards the end.
+# This syntax may look a bit unwieldy, so you'll be glad to know that you can specify these animations in JSON script! Again, we're quite short on time, so I'll refer you to the excellent Clutter documentation to find out about that.
+
+-- [font=monospace 18px] [command=gcc -o clouds clouds.c `pkg-config --cflags --libs clutter-1.0` && ./clouds]
+
+# Ok, that's a bit more convincing. Now we need a few more of them. We also need a bit of random variance and some nice magic numbers, but I'll leave that as an exercise for you to play with in your own time. Alternatively, you can see the values I've used if you download the source after the talk.
+# The only tricky bit here is managing object life-cycle. Of course, use a high-level language and this will be taken care of for you, but I've given a useful C-snippet here for the more hardcore hackers in the audience.
+# So, let's see what our demo looks like now we've added a load more clouds and a bit of random variance...
+
+<span foreground='green'>static gboolean</span> create_cloud (<span foreground='green'>ClutterActor</span> *cloud_texture)
+{
+  <span foreground='green'>ClutterActor</span> *cloud = clutter_clone_new (cloud_texture);
+
+  <span foreground='pink'>// Add some random variance to the size/position/etc. properties of cloud ...</span>
+
+  <span foreground='pink'>// Create the animation as in the previous slide ...</span>
+
+  <span foreground='pink'>// Handle destruction of the actor and animation object</span>
+  <span foreground='green'>ClutterTimeline</span> *timeline = clutter_animator_get_timeline (animator);
+  <span foreground='cyan'>g_signal_connect_swapped</span> (timeline, <span foreground='purple'>"completed"</span>,
+                            <span foreground='cyan'>G_CALLBACK</span> (clutter_actor_destroy), cloud);
+  <span foreground='light blue'>g_object_weak_ref</span> (<span foreground='cyan'>G_OBJECT</span> (cloud), (<span foreground='green'>GWeakNotify</span>)<span foreground='light blue'>g_object_unref</span>, animator);
+
+  clutter_animator_start (animator);
+
+  <span foreground='yellow'>return</span> <span foreground='purple'>TRUE</span>;
+}
+
+<span foreground='pink'>// Hide the original cloud, don't do any animation with it</span>
+clutter_actor_hide (cloud);
+
+<span foreground='pink'>// Generate a new random cloud every 10th of a second</span>
+<span foreground='green'>guint</span> source = <span foreground='light blue'>g_timeout_add_full</span> (<span foreground='green'>CLUTTER_PRIORITY_REDRAW</span>, <span foreground='purple'>100</span>,
+                                   (<span foreground='green'>GSourceFunc</span>)create_cloud, cloud, <span foreground='purple'>NULL</span>);
+
+# Much nicer! As we're running out of time, I also leave it as an exercise for the user to add input-handling.
