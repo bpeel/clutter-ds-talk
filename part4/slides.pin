@@ -2,6 +2,45 @@
 [shading-opacity=0.85]
 [transition=fade]
 [fill]
+- [port.jpg] [font=Sans 50px] [left]
+Porting Clutter
+
+• Make a Cogl winsys
+#
+# Robert Bragg has done a lot of work for the upcoming 1.8 release to
+# make almost everything on the graphics side of Clutter be abstracted
+# in Cogl
+#
+# Cogl 1.8 is split out from Clutter and it can be used standalone. This means
+# even window creation is now part of Cogl
+#
+# The backend specific parts are abstracted in a single file for each winsys
+# with virtual methods. So to add a new backend there only needs to be a new
+# winsys file.
+#
+# Cogl can now run-time select between multiple backends. This means it's
+# possible to example to make a single Cogl package that can support
+# EGL, X11, GLES and OpenGL.
+
+• Add Clutter backend for events
+#
+# Cogl doesn't yet have any support for handling events. However the
+# event handling is still contained in a single file for each backend in
+# Clutter so it's not too difficult to add a new one.
+
+• Test!
+
+# Every platform has quirks and different performance characteristics so
+# it's always necessary to profile your application on your target platform
+# to get the best performance. For example, the difference between a deferred
+# renderer like SGX and an immediate mode renderer like the Intel GPUs can
+# make a huge difference to the kinds of operations that are efficient.
+#
+# Eg, on Intel we can set a hint to avoid clearing the stage when we
+# don't need to. However, on a deferred renderer we want to ignore
+# this hint because the clear is almost free and lets the driver make
+# better decisions.
+
 - [sofatron.jpg] [bottom-left] [command=mex -f]
 
 Mex (aka Sofatron)
