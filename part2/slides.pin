@@ -38,6 +38,85 @@ One-click Clutter Installer for Windows
 
 http://is.gd/clutter_installer
 
+-- [plan.png] [top]
+
+Plan
+
+# Imagine we are making an image viewer
+
+# We want to make an effect to transition between these two images
+
+# We're going to make the second image grow in a circle with
+# transparent edges from the center of the screen.
+
+# To do this we will use a CoglMaterial. A material is inteded to be a
+# persistent object representing a snapshot of the state needed to
+# draw.
+
+# We will add three layers two this material. The first two are these
+# two images.
+
+# Then there's a third image which only has an alpha component.
+
+# We will use this to interpolate between these two images.
+
+# For example, in this picture the black parts will display the first
+# image and the white parts will display the second image.
+
+# The parts in-between will be a blend of the pixels from both images.
+
+# Will use a texture matrix on the third layer to make the circle
+# start off really small and then grow as the animation progresses.
+
+# This blending operation is something that GPUs are really good at,
+# so this should be efficient on most platforms.
+
+# -- Switch to Visual Studio. CODE! yay!
+
+# We'll implement the effect with a custom actor.
+
+# (show constructor)
+
+# In the constructor we set up the material. This is only done
+# once. The material represents a snapshot of the GL state needed to 
+# render so once we have set this up we can let Cogl efficently switch
+# to this state whenever we want to paint it.
+
+# First two layers are the textures
+
+# Third layer is the magic part.
+
+# Here we specify the blend function to interpolate between the two
+# previous layers. The third argument specifies where to get the
+# interpolation value which is a number from 0 to 1.
+
+# We tell it to take the value from the third texture which contains
+# the circle image.
+
+# There is a 'progress' property on the custom actor
+
+# We use this value to set up the texture matrix whenever we paint
+
+# (show update_progress function)
+
+# Here we create a matrix with a scale based on the progress value and
+# set it as the matrix for the third layer.
+
+# (show paint)
+
+# When we actually we can just select the material we created and draw
+# a single rectangle. There is no overdraw here so each fragment is 
+# calculated and only written to the framebuffer once.
+
+# (show main function)
+
+# Once we've setup this custom actor we can just use the normal
+# Clutter animation framework to animate the transition
+
+# So here's what it looks like
+
+# (run demo!)
+
 --
 
 Attribution
