@@ -90,17 +90,20 @@ clutter_animator_start (animator);
 # ClutterAnimator lets you set arbitrary destinations for GObject properties at a particular progression of the animation. So for example, you can see I make the cloud fade in at the beginning, stay opaque for most of the animation, then fade out towards the end.
 # This syntax may look a bit unwieldy, so you'll be glad to know that you can specify these animations in JSON script! Again, we're quite short on time, so I'll refer you to the excellent Clutter documentation to find out about that.
 
--- [font=monospace 18px] [command=gcc -o clouds clouds.c `pkg-config --cflags --libs clutter-1.0` && ./clouds]
+-- [font=monospace 18px] [command=gcc -o part5 part5.c `pkg-config --cflags --libs clutter-1.0` && ./part5]
 
-# Ok, that's a bit more convincing. Now we need a few more of them. We also need a bit of random variance and some nice magic numbers, but I'll leave that as an exercise for you to play with in your own time. Alternatively, you can see the values I've used if you download the source after the talk.
+# So we have our cloud and we have our animation - Now we just need more of them. A good way of doing this would be to just generate so many over time and destroy them when the animation finishes.
+# We'll vary their position across the width of the window so they don't all come from the same place.
 # The only tricky bit here is managing object life-cycle. Of course, use a high-level language and this will be taken care of for you, but I've given a useful C-snippet here for the more hardcore hackers in the audience.
-# So, let's see what our demo looks like now we've added a load more clouds and a bit of random variance...
 
 <span foreground='green'>static gboolean</span> create_cloud (<span foreground='green'>ClutterActor</span> *cloud_texture)
 {
   <span foreground='green'>ClutterActor</span> *cloud = clutter_clone_new (cloud_texture);
 
-  <span foreground='pink'>// Add some random variance to the size/position/etc. properties of cloud ...</span>
+  <span foreground='pink'>// Vary the x-position randomly across the screen</span>
+  clutter_actor_set_x (cloud,
+    <span foreground='light blue'>g_random_double_range</span> (-clutter_actor_get_width (cloud),
+                           clutter_actor_get_width (clutter_stage_get_default ())));
 
   <span foreground='pink'>// Create the animation as in the previous slide ...</span>
 
@@ -121,5 +124,55 @@ clutter_actor_hide (cloud);
 <span foreground='pink'>// Generate a new random cloud every 10th of a second</span>
 <span foreground='green'>guint</span> source = <span foreground='light blue'>g_timeout_add_full</span> (<span foreground='green'>CLUTTER_PRIORITY_REDRAW</span>, <span foreground='purple'>100</span>,
                                    (<span foreground='green'>GSourceFunc</span>)create_cloud, cloud, <span foreground='purple'>NULL</span>);
+
+-- [font=monospace 18px] [command=gcc -o clouds clouds.c `pkg-config --cflags --libs clutter-1.0` && ./clouds]
+
+# Ok, that's a bit more convincing, but it's not quite there yet. So lets add a bit of random variance. You'll want to play with the numbers a bit - all very scientific of course.
+# So, let's see what our demo looks like now we've added a bit of random variance...
+
+<span foreground='light blue'>#define SCALE_X_VARIANCE</span> <span foreground='purple'>0.3</span>
+<span foreground='light blue'>#define SCALE_Y_VARIANCE</span> <span foreground='purple'>0.2</span>
+<span foreground='light blue'>#define ROT_Z_VARIANCE</span> <span foreground='purple'>0.1</span>
+<span foreground='light blue'>#define ALPHA_VARIANCE</span> <span foreground='purple'>0.5</span>
+<span foreground='light blue'>#define ANIM_LENGTH</span> <span foreground='purple'>10000</span>
+<span foreground='light blue'>#define ANIM_VARIANCE</span> <span foreground='purple'>0.3</span>
+<span foreground='light blue'>#define OPACITY</span> <span foreground='purple'>0.60</span>
+<span foreground='light blue'>#define OPACITY_VARIANCE</span> <span foreground='purple'>0.33</span>
+<span foreground='light blue'>#define HEIGHT</span> <span foreground='purple'>0.85</span>
+<span foreground='light blue'>#define HEIGHT_VARIANCE</span> <span foreground='purple'>0.2</span>
+<span foreground='light blue'>#define HEIGHT_DROP</span> <span foreground='purple'>1.7</span>
+
+<span foreground='green'>static <span foreground='purple'>inline</span> gdouble</span>
+get_variance (gdouble value, gdouble constant)
+{
+  return value + value * (<span foreground='purple'>2.0</span> * <span foreground='light blue'>g_random_double</span> () - <span foreground='purple'>1.0</span>) * constant;
+}
+
+<span foreground='green'>static gboolean</span> create_cloud (<span foreground='green'>ClutterActor</span> *cloud_texture)
+{
+  <span foreground='red'>...</span>
+
+  <span foreground='pink'>// Vary scale, rotation and position</span>
+  clutter_actor_set_scale_with_gravity (cloud,
+                                        get_variance (<span foreground='purple'>1</span>, SCALE_X_VARIANCE),
+                                        get_variance (<span foreground='purple'>1</span>, SCALE_Y_VARIANCE),
+                                        <span foreground='purple'>CLUTTER_GRAVITY_CENTER</span>);
+  clutter_actor_set_z_rotation_from_gravity (cloud,
+                                             get_variance (<span foreground='purple'>360</span>, ROT_Z_VARIANCE),
+                                             <span foreground='purple'>CLUTTER_GRAVITY_CENTER</span>);
+
+  stage = clutter_stage_get_default ();
+  height = get_variance (clutter_actor_get_height (stage) * HEIGHT -
+                         clutter_actor_get_height (cloud) / <span foreground='purple'>2.0</span>,
+                         HEIGHT_VARIANCE);
+
+  opacity = (<span foreground='green'>guint8</span>)(get_variance (OPACITY, OPACITY_VARIANCE) * <span foreground='purple'>255.0</span>);
+
+  duration = get_variance (ANIM_LENGTH, ANIM_VARIANCE));
+
+  <span foreground='red'>...</span>
+}
+
+<span foreground='red'>...</span>
 
 # Much nicer! As we're running out of time, I also leave it as an exercise for the user to add input-handling.
