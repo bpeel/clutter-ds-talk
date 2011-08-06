@@ -91,6 +91,9 @@ main (int argc, char **argv)
                                  0.0f);
   clutter_actor_add_constraint (fader, constraint);
 
+  /* massive hack --- nothing to see here! */
+  foo_fader_set_progress (FOO_FADER (fader), 0.00001f);
+
   clutter_actor_show (stage);
 
   clutter_main ();
