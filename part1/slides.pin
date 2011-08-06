@@ -58,7 +58,7 @@ Prebuilt libraries
 
 adb
 
-- [camera]
+- [camera] [camera-framerate=30] [camera-resolution=640x480]
 
 - [script.jpg]
 
@@ -97,6 +97,6 @@ Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan
 Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan
 Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan
 Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan Nyan
-- [camera]
+- [camera] [camera-framerate=30] [camera-resolution=640x480]
 
 -
